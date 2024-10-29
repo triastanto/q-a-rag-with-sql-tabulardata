@@ -1,0 +1,6 @@
+openai
+python-dotenv
+pyprojroot
+PyYAML
+SQLAlchemy
+pandas

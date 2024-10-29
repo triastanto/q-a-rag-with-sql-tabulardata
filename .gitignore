@@ -1,0 +1,4 @@
+.env
+.venv
+data/*.db
+src/utils/__pycache__
