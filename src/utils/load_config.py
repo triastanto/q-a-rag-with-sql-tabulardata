@@ -1,5 +1,12 @@
 import yaml
 from pyprojroot import here
+from dotenv import load_dotenv
+import os
+from openai import OpenAI
+import chromadb
+import shutil
+
+print("Environment variables are loaded:", load_dotenv())
 
 class LoadConfig:
     def __init__(self) -> None:
@@ -11,6 +18,9 @@ class LoadConfig:
         self.load_openai_models()
         self.load_chroma_client()
         self.load_rag_config(app_config=app_config)
+        
+        # Un comment the code below if you want to clean up the upload csv SQL DB on every fresh run of the chatbot. (if it exists)
+        self.remove_directory(self.uploaded_files_sqldb_directory)
 
     def load_directories(self, app_config):
         self.stored_csv_xlsx_directory = here(
@@ -24,13 +34,39 @@ class LoadConfig:
         self.persist_directory = app_config["directories"]["persist_directory"]
 
     def load_llm_configs(self, app_config):
-        pass
+        self.embedding_model_name = os.getenv("embed_deployment_name")
 
     def load_openai_models(self):
-        pass
+        self.openai_client = OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY")
+        )
 
     def load_chroma_client(self):
-        pass
+        self.chroma_client = chromadb.PersistentClient(
+            path=str(here(self.persist_directory)))
 
     def load_rag_config(self, app_config):
-        pass
+        self.collection_name = app_config["rag_config"]["collection_name"]
+        
+    def remove_directory(self, directory_path: str):
+        """
+        Removes the specified directory.
+
+        Parameters:
+            directory_path (str): The path of the directory to be removed.
+
+        Raises:
+            OSError: If an error occurs during the directory removal process.
+
+        Returns:
+            None
+        """
+        if os.path.exists(directory_path):
+            try:
+                shutil.rmtree(directory_path)
+                print(
+                    f"The directory '{directory_path}' has been successfully removed.")
+            except OSError as e:
+                print(f"Error: {e}")
+        else:
+            print(f"The directory '{directory_path}' does not exist.")

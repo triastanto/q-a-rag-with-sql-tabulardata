@@ -4,3 +4,4 @@ pyprojroot
 PyYAML
 SQLAlchemy
 pandas
+chromadb
