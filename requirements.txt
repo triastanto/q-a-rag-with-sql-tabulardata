@@ -5,3 +5,6 @@ PyYAML
 SQLAlchemy
 pandas
 chromadb
+langchain
+langchain-core
+langchain_community
